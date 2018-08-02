@@ -1,6 +1,7 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +31,12 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String[] words = phrase.split("\\W+");
+		StringBuffer result = new StringBuffer();
+		for(int i = 0; i < words.length; i++) {
+			result.append(Character.toUpperCase(words[i].charAt(0)));
+		}
+		return result.toString();
 	}
 
 	/**
@@ -84,17 +89,27 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
+			if(sideOne == sideTwo && sideTwo == sideThree) {
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
+			if(sideOne == sideTwo) {
+				return true;
+			} else if (sideOne == sideThree) {
+				return true;
+			} else if (sideTwo == sideThree){
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
+			if(sideOne != sideTwo && sideTwo != sideThree && sideOne != sideThree) {
+				return true;
+			}
 			return false;
 		}
 
@@ -116,8 +131,30 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		char[] chars = string.toCharArray();
+		int finalScore = 0;
+		
+		String[] points = {"AEIOULNRST", "DG", "BCMP", "FHVWY", "K", "JX"};
+		for (char c : chars) {
+			c = Character.toUpperCase(c);
+			if (points[0].indexOf(c) >= 0) {
+				finalScore += 1;
+			} else if (points[1].indexOf(c) >= 0) {
+				finalScore += 2;
+			} else if (points[2].indexOf(c) >= 0) {
+				finalScore += 3;
+			} else if (points[3].indexOf(c) >= 0) {
+				finalScore += 4;
+			} else if (points[4].indexOf(c) >= 0) {
+				finalScore += 5;
+			} else if (points[5].indexOf(c) >= 0) {
+				finalScore += 8;
+			} else {
+				finalScore += 10;
+			}
+		}
+		
+		return finalScore;
 	}
 
 	/**
@@ -152,8 +189,18 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		char[] chars = string.toCharArray();
+		StringBuffer finalNumber = new StringBuffer();
+		
+		for (char c : chars) {
+			if (Character.toString(c).matches("[0-9]") && finalNumber.length() < 11) {
+				finalNumber.append(c);
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		return finalNumber.toString();
 	}
 
 	/**
