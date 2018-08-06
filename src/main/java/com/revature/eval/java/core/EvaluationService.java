@@ -1,6 +1,11 @@
 package com.revature.eval.java.core;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -548,26 +553,31 @@ public class EvaluationService {
 		public static String encode(String string) {
 			StringBuilder output = new StringBuilder();
 			char[] letters = string.toCharArray();
-			char temp;
+//			char temp;
 			int count = 0;
 			
 			for (char c : letters) {
-				temp = Character.toLowerCase(c);
+//				temp = Character.toLowerCase(c);
 //				if (Character.toString(c).matches("[A-Z]")) {
 //					temp = (char)(c+32);
 //				} else {
 //					temp = c;
 //				}
 				
-				System.out.println(temp);
+//				System.out.println(temp);
 				
-				if (Character.toString(temp).matches("[a-z]")) {
+				if (Character.toString(c).matches("[a-z]")) {
 					int dist = c-97;
 					dist = 25-dist;
 					output.append((char)(97+dist));
 					count++;
-				} else if (Character.toString(temp).matches("[0-9]")) {
+				} else if (Character.toString(c).matches("[0-9]")) {
 					output.append(c);
+					count++;
+				} else if (Character.toString(c).matches("[A-Z]")) {
+					int dist = (c+32)-97;
+					dist = 25-dist;
+					output.append((char)(97+dist));
 					count++;
 				}
 				
@@ -577,7 +587,8 @@ public class EvaluationService {
 					count = 0;
 				}
 			}
-			return output.toString();
+			
+			return output.toString().trim();
 		}
 
 		/**
@@ -691,8 +702,15 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		if (given.getClass().equals(LocalDateTime.class)) {
+			LocalDateTime temp = (LocalDateTime)given;
+			return temp.plusSeconds(1000000000);
+		} else {
+			LocalDate temp = (LocalDate)given;
+			LocalDateTime finalTime = temp.atStartOfDay();
+			finalTime = finalTime.plusSeconds(1000000000);
+			return finalTime;
+		}
 	}
 
 	/**
@@ -764,8 +782,51 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		string = string.replace(" ", "");
+		System.out.println(string);
+		ArrayList<Integer> values = new ArrayList<Integer>();
+		int total = 0;
+		int temp;
+		
+		for (int i = string.length()-2; i >= 0; i-=2) {
+			if (Character.isDigit(string.charAt(i))) {
+				temp = Integer.parseInt(Character.toString(string.charAt(i)));
+				if (temp * 2 < 10) {
+					System.out.println(temp + " " + temp*2);
+					values.add(temp * 2);
+				} else {
+					int num = temp * 2;
+					int sum = 0;
+					
+					while(num > 0) {
+						sum += num % 10;
+						num /= 10;
+					}
+					System.out.println(sum);
+					values.add(sum);
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		for (int i = string.length()-1; i >= 0; i-=2) {
+			if (Character.isDigit(string.charAt(i))) {
+				values.add(Integer.parseInt(Character.toString(string.charAt(i))));
+			} else {
+				return false;
+			}
+		}
+		
+		for (int i : values) {
+			total += i;
+		}
+		
+		if (total % 10 == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
